@@ -245,7 +245,6 @@ whereAmI(52.508, 13.381);
 whereAmI(19.037, 72.873);
 whereAmI(-33.933, 18.474);
 
-*/ 
 
 const lotteryPromise = new Promise((resolve, reject) => {
    
@@ -268,9 +267,65 @@ const wait = (seconds) => {
   })
 }
 
-wait(2).then(() => {
-  console.log('2 seconds passed');
+wait(1).then(() => {
+  console.log('1 seconds passed');
   return wait(1);
 }).then(() => {
-  console.log('1 second passed');
+  console.log('2 second passed');
+  return wait(1);
+}).then(() => {
+  console.log('3 second passed');
+  return wait(1);
+}).then(() => {
+  console.log('4 second passed');
 })
+
+
+Promise.resolve('abc').then(x => console.log(x))
+Promise.reject(new Error('Problem')).catch(x => console.log(x))
+*/
+
+
+const getPosition = () => {
+  return new Promise((resolve, reject) => {
+   // navigator.geolocation.getCurrentPosition(
+   //   position => resolve(position),
+   //   err => reject(err))
+ // })
+
+    navigator.geolocation.getCurrentPosition(resolve, reject)
+  })
+}
+
+//getPosition()
+//  .then(pos => console.log(pos))
+
+  const whereAmI = (lat, lng) => {
+
+    getPosition()
+    .then(pos => {
+      console.log(pos);
+      const {latitude: lat, longitude: lng} = pos.coords;
+      return fetch(`https://geocode.xyz/${lat},${lng}?json=1`)
+    })
+
+
+    .then (response => {
+      if(!response.ok) throw new Error(`Problem with geocoding ${response.status}`)
+      return response.json()
+    })
+    .then(data => {
+      console.log(data);
+      console.log(`You are in ${data.city}, ${data.country}`);
+      return fetch(`https://restcountries.com/v2/name/${data.country}`)
+    })
+    .then ( response => {
+      if(!response.ok) throw new Error(`Country not found ${response.status}`)
+      return response.json()
+    })
+    .then(data => renderCountry(data[0]))
+    .catch(error => console.error(`${error.message}`))
+  
+  }
+
+  btn.addEventListener('click', whereAmI)
