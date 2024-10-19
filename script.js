@@ -379,20 +379,29 @@ const getPosition = () => {
 
 }
 
-const whereAmI = async (country) => {
+const whereAmI = async () => {
+try {
   const pos = await getPosition();
 
   const { latitude: lat, longitude: lng } = pos.coords;
 
   const res = await fetch(`https://geocode.xyz/${lat},${lng}?geoit=json`);
+
+  if (!res.ok) throw new Error(`Problem with geocoding ${res.status}`);
   const data2 = await res.json();
   console.log(data2);
 
  const response = await fetch(`https://restcountries.com/v2/name/${data2.country}`)
+ if(!response.ok) throw new Error(`Country not found ${response.status}`)
  console.log(response);
  const data = await response.json();
  console.log(data);
  renderCountry(data[0])
+} catch (err) {
+  console.error(`${err}`);
+  renderError(`Something went wrong ${err.message}`)
+}
 
 }
 whereAmI()
+
