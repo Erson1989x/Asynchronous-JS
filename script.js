@@ -285,18 +285,6 @@ Promise.resolve('abc').then(x => console.log(x))
 Promise.reject(new Error('Problem')).catch(x => console.log(x))
 
 
-
-const getPosition = () => {
-  return new Promise((resolve, reject) => {
-   // navigator.geolocation.getCurrentPosition(
-   //   position => resolve(position),
-   //   err => reject(err))
- // })
-
-    navigator.geolocation.getCurrentPosition(resolve, reject)
-  })
-}
-
 //getPosition()
 //  .then(pos => console.log(pos))
 
@@ -383,3 +371,28 @@ createImage('img/img-1.jpg')
   })
   .catch(err => console.error(err));
 */
+
+const getPosition = () => {
+  return new Promise((resolve, reject) => {
+    navigator.geolocation.getCurrentPosition(resolve, reject)
+  })
+
+}
+
+const whereAmI = async (country) => {
+  const pos = await getPosition();
+
+  const { latitude: lat, longitude: lng } = pos.coords;
+
+  const res = await fetch(`https://geocode.xyz/${lat},${lng}?geoit=json`);
+  const data2 = await res.json();
+  console.log(data2);
+
+ const response = await fetch(`https://restcountries.com/v2/name/${data2.country}`)
+ console.log(response);
+ const data = await response.json();
+ console.log(data);
+ renderCountry(data[0])
+
+}
+whereAmI()
