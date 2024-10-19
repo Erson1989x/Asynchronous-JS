@@ -182,7 +182,7 @@ btn.addEventListener('click',() => {
   getCountryData('portugal');
 });
 
-*/
+
 
 const getCountryData = function (country) {
   // Country 1
@@ -218,3 +218,59 @@ btn.addEventListener('click', function () {
 });
 
 // getCountryData('australia');
+
+*
+
+const whereAmI = (lat, lng) => {
+  fetch(`https://geocode.xyz/${lat},${lng}?json=1`)
+  .then (response => {
+    if(!response.ok) throw new Error(`Problem with geocoding ${response.status}`)
+    return response.json()
+  })
+  .then(data => {
+    console.log(data);
+    console.log(`You are in ${data.city}, ${data.country}`);
+    return fetch(`https://restcountries.com/v2/name/${data.country}`)
+  })
+  .then ( response => {
+    if(!response.ok) throw new Error(`Country not found ${response.status}`)
+    return response.json()
+  })
+  .then(data => renderCountry(data[0]))
+  .catch(error => console.error(`${error.message}`))
+
+}
+
+whereAmI(52.508, 13.381);
+whereAmI(19.037, 72.873);
+whereAmI(-33.933, 18.474);
+
+*/ 
+
+const lotteryPromise = new Promise((resolve, reject) => {
+   
+  console.log('Lottery draw is happening...');
+     setTimeout(() => {
+      if (Math.random() >= 0.5) {
+        resolve('You win');
+      } else {
+        reject(new Error('You lost your money'));
+      }       
+     }, 2000);
+});
+
+lotteryPromise.then(res => console.log(res)).catch(err => console.error(err))
+
+// Promisifying setTimeout
+const wait = (seconds) => {
+  return new Promise(resolve => {
+    setTimeout(resolve, seconds * 1000);
+  })
+}
+
+wait(2).then(() => {
+  console.log('2 seconds passed');
+  return wait(1);
+}).then(() => {
+  console.log('1 second passed');
+})
