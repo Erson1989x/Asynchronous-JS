@@ -370,7 +370,7 @@ createImage('img/img-1.jpg')
     return wait(2);
   })
   .catch(err => console.error(err));
-*/
+
 
 const getPosition = () => {
   return new Promise((resolve, reject) => {
@@ -393,15 +393,34 @@ try {
 
  const response = await fetch(`https://restcountries.com/v2/name/${data2.country}`)
  if(!response.ok) throw new Error(`Country not found ${response.status}`)
- console.log(response);
+
  const data = await response.json();
- console.log(data);
  renderCountry(data[0])
+
+ return `You are in ${data2.city}, ${data2.country}`;
 } catch (err) {
   console.error(`${err}`);
   renderError(`Something went wrong ${err.message}`)
+
+  // Reject promise returned from async function
+  throw err;
 }
 
 }
-whereAmI()
+console.log('1: Will get location');
+//const city = whereAmI()
+//console.log(city);
+//whereAmI().then(city => console.log(`2: ${city}`)).catch(err => console.error(`2: ${err.message}`)).finally(() => console.log('3: Finished getting location'));
+console.log('2: Done getting location');
 
+(async function () {
+  try {
+    const city = await whereAmI();
+    console.log(`2: ${city}`);
+  } catch (err) {
+    console.error(`2: ${err.message}`);
+  }
+  console.log('3: Finished getting location');
+})();
+
+*/
