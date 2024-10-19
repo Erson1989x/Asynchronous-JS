@@ -5,8 +5,6 @@ const countriesContainer = document.querySelector('.countries');
 
 ///////////////////////////////////////
 
-
-
 const renderCountry = function (data, className = '') {
   const html = `
   <article class="country ${className}">
@@ -23,7 +21,7 @@ const renderCountry = function (data, className = '') {
   </article>
   `;
   countriesContainer.insertAdjacentHTML('beforeend', html);
- // countriesContainer.style.opacity = 1;
+  // countriesContainer.style.opacity = 1;
 };
 
 const renderError = function (msg) {
@@ -423,7 +421,7 @@ console.log('2: Done getting location');
   console.log('3: Finished getting location');
 })();
 
-*/
+
 
 const get3Countries = async (c1, c2, c3) => {
   try {
@@ -442,3 +440,56 @@ const get3Countries = async (c1, c2, c3) => {
 }
 
 get3Countries('portugal', 'canada', 'tanzania')
+
+*/
+
+// Promise.race
+
+(async () => {
+  const res = await Promise.race([
+    getJSON(`https://restcountries.com/v2/name/italy`),
+    getJSON(`https://restcountries.com/v2/name/egypt`),
+    getJSON(`https://restcountries.com/v2/name/mexico`),
+  ]);
+  console.log(res[0]);
+})();
+
+const timeout = (seconds) => {
+  return new Promise((_, reject) => {
+    setTimeout(() => {
+      reject(new Error('Request took too long!'));
+    }, seconds * 1000);
+  });
+}
+
+Promise.race([
+  getJSON(`https://restcountries.com/v2/name/tanzania`),
+  timeout(1),
+])
+  .then(res => console.log(res[0]))
+  .catch(err => console.error(err))
+
+// Promise.allSettled
+
+Promise.allSettled([
+  Promise.resolve('Success'),
+  Promise.reject('ERROR'),
+  Promise.resolve('Another success'),
+]).then(res => console.log(res))
+
+Promise.all([
+  Promise.resolve('Success'),
+  Promise.reject('ERROR'),
+  Promise.resolve('Another success'),
+]).then(res => console.log(res))
+.catch(err => console.error(err))
+
+// Promise.any
+
+Promise.any([
+  Promise.resolve('Fullfilled'),
+  Promise.reject('ERROR'),
+  Promise.resolve('Another success'),
+]).then(res => console.log(res))
+.catch(err => console.error(err))
+
